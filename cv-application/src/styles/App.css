@@ -1,0 +1,62 @@
+@import "./index.css";
+
+.general-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--blue);
+  color: white;
+  padding: 40px 32px;
+}
+
+.general-section button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background-color: var(--blue-light);
+  color: white;
+}
+
+.general-section label {
+  color: var(--blue-super-light);
+}
+
+.general-section input {
+  border-color: var(--blue-half-dull);
+}
+
+.general-section input:focus {
+  border-color: var(--blue-dull);
+}
+
+.history-section {
+  padding: 32px;
+}
+
+.history-records-list > * {
+  border-left: 2px solid var(--gray-medium);
+  padding-left: 1rem;
+}
+
+.organization-name {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.add-section-button {
+  padding: 12px 16px;
+  border: 2px dashed var(--gray-medium);
+  color: var(--gray-dark);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.add-section-button:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.person-name {
+  font-size: 2.25rem;
+  font-weight: 700;
+}

@@ -1,0 +1,19 @@
+# Игнорируем node_modules во всех вложенных папках
+**/node_modules/
+
+# Игнорируем папки сборки (production build) во всех проектах
+**/dist/
+**/build/
+
+# Игнорируем файлы с секретами и ключами (если появятся)
+**/.env
+**/.env.local
+
+# Логи ошибок npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Системные файлы macOS и Windows
+.DS_Store
+Thumbs.db
