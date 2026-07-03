@@ -30,6 +30,13 @@
   }
 }
 
+.avatar {
+  width: 120px;
+  height: 120px;
+  background-color: #2e303a;
+
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;

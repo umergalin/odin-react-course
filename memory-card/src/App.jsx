@@ -4,16 +4,19 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
+function clickHandler() {
+  console.log("hello");
+}
+
 function App() {
   const [count, setCount] = useState(0)
+  const [imgUrl, setImgUrl] = useState(null);
 
   return (
     <>
       <section id="center">
         <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+          <img className="avatar" src={imgUrl}></img>
         </div>
         <div>
           <h1>Get started</h1>
@@ -24,7 +27,13 @@ function App() {
         <button
           type="button"
           className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          onClick={() => {
+            const min = 10000000;
+            const max = 99999999;
+            const seed = Math.random() * (max - min) + min;
+            setImgUrl(`https://api.dicebear.com/10.x/lorelei/png?size=120&seed=${seed}`);
+            setCount((count) => count + 1);
+          }}
         >
           Count is {count}
         </button>
