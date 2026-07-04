@@ -4,6 +4,8 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
+import { generateSeed } from './js/utils.js'
+
 function clickHandler() {
   console.log("hello");
 }
@@ -28,10 +30,7 @@ function App() {
           type="button"
           className="counter"
           onClick={() => {
-            const min = 10000000;
-            const max = 99999999;
-            const seed = Math.random() * (max - min) + min;
-            setImgUrl(`https://api.dicebear.com/10.x/lorelei/png?size=120&seed=${seed}`);
+            setImgUrl(`https://api.dicebear.com/10.x/lorelei/png?size=120&seed=${generateSeed(8)}`);
             setCount((count) => count + 1);
           }}
         >
