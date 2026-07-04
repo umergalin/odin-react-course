@@ -6,9 +6,27 @@ import './App.css'
 
 import { generateSeed } from './js/utils.js'
 
-function clickHandler() {
-  console.log("hello");
-}
+const CHAR_GEN_ARGS = {
+  skinColor: [
+    "#6f3e39",
+    "#7d4b40",
+    "#8c4a25",
+    "#975140",
+    "#995c30",
+    "#a46649",
+    "#b76e44",
+    "#c6775c",
+    "#e18d6f",
+    "#e59d65",
+    "#f39f7c",
+    "#ffb99e",
+    "#ffc5b7",
+    "#ffcba3",
+    "#ffe1d5",
+  ].map(hexCode => hexCode.replace("#", "")).join(","),
+};
+
+console.log(`skinColor=${CHAR_GEN_ARGS.skinColor}&`);
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,7 +48,7 @@ function App() {
           type="button"
           className="counter"
           onClick={() => {
-            setImgUrl(`https://api.dicebear.com/10.x/lorelei/png?size=120&seed=${generateSeed(8)}`);
+            setImgUrl(`https://api.dicebear.com/10.x/dylan/png?skinColor=${CHAR_GEN_ARGS.skinColor}&size=120&seed=${generateSeed(8)}&backgroundColor=&`);
             setCount((count) => count + 1);
           }}
         >
