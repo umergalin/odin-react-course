@@ -26,17 +26,41 @@ const CHAR_GEN_ARGS = {
   ].map(hexCode => hexCode.replace("#", "")).join(","),
 };
 
-console.log(`skinColor=${CHAR_GEN_ARGS.skinColor}&`);
+async function getImage(imgContainer) {
+  const baseUrl = "https://api.dicebear.com/10.x/dylan/svg";
+  const seed = generateSeed(8);
+
+  const query = [
+    `skinColor=${CHAR_GEN_ARGS.skinColor}`,
+    `seed=${seed}`,
+    `backgroundColor=`
+  ].join("&");
+
+  const url = `${baseUrl}?${query}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Can't get character image: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const objUrl = URL.createObjectURL(blob); // CREATING MEMORY LEAK
+    imgContainer.src = objUrl;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 
 function App() {
   const [count, setCount] = useState(0)
-  const [imgUrl, setImgUrl] = useState(null);
 
   return (
     <>
       <section id="center">
         <div className="hero">
-          <img className="avatar" src={imgUrl}></img>
+          <img className="avatar"></img>
         </div>
         <div>
           <h1>Get started</h1>
@@ -48,7 +72,7 @@ function App() {
           type="button"
           className="counter"
           onClick={() => {
-            setImgUrl(`https://api.dicebear.com/10.x/dylan/png?skinColor=${CHAR_GEN_ARGS.skinColor}&size=120&seed=${generateSeed(8)}&backgroundColor=&`);
+            getImage(document.querySelector('.avatar'), 120);
             setCount((count) => count + 1);
           }}
         >
