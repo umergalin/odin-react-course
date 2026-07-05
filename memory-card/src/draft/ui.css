@@ -1,0 +1,60 @@
+:root {
+    --eel: #4b4b4b;
+    --polar: #f7f7f7;
+    --sky: #8CE6FF;
+    --cyan: #49D8FF;
+    --blue: #3FC2F6;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+}
+
+
+body {
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    position: relative;
+    height: 500px;
+    width: 500px;
+    background-color: var(--eel);
+}
+
+.back {
+    position: absolute;
+    width: 180px;
+    height: 150px;
+    background-color: var(--polar);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.back .window {
+    position: absolute;
+    top: 0;
+    width: 75%;
+    height: 50%;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+}
+
+.window {
+    background-color: var(--cyan);
+    border: 4px solid var(--blue);
+    border-radius: 4px;
+}
