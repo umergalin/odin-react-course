@@ -76,8 +76,9 @@ function Person({ seed, row, col }) {
       <div
         className="person"
         style={{
-          gridRow: `${row} / ${row + 1}`,
-          gridColumn: `${col} / ${col + 1}`,
+          // Convert 0-based indices to 1-based CSS Grid lines (+1)
+          gridRow: `${row + 1} / ${row + 2}`,
+          gridColumn: `${col + 1} / ${col + 2}`,
         }}
       >
         {imgUrl && <img src={imgUrl} alt="character" />}
