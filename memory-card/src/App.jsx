@@ -7,7 +7,26 @@ import Person from "./Person.jsx";
 const HALF_COLLS_COUNT = 2; // one side def prevents even grid
 const TOTAL_ROWS_COUNT = 4;
 
+const DIFFICULTY_SETTINGS = {
+  basePeopleCount: 1,
+  scalingFactor: 1.2,
+  formula: (round) => basePeopleCount * scalingFactor * Math.sqrt(round),
+  maxPeople: HALF_COLLS_COUNT * 2 * TOTAL_ROWS_COUNT,
+};
+
+const INITIAL_GAME_STATE = {
+  isPlaying: false,
+  score: 0,
+  round: 1,
+};
+
 function App() {
+  const [scoreRecord, setScoreRecord] = useState(0);
+  const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
+  const [score, setScore] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [round, setRound] = useState(0);
+
   const [gridItems, setGridItems] = useState(
     Array.from(Array(TOTAL_ROWS_COUNT), () =>
       Array(HALF_COLLS_COUNT * 2 + 1).fill(null), // adding extra coll for spacing
@@ -25,6 +44,10 @@ function App() {
     });
   }
 
+  function getTargetPersonCount() {
+
+  }
+
   function addRandomPerson() {
     const freeCells = getFreeCells();
     if (freeCells.length === 0) {
@@ -37,7 +60,7 @@ function App() {
   }
 
   function removePerson(rowIdx, colIdx) {
-    setGridItems((prev) => {
+     setGridItems((prev) => {
       const next = [...prev];
       next[rowIdx] = [...next[rowIdx]];
       next[rowIdx][colIdx] = null; 
@@ -59,16 +82,22 @@ function App() {
     return freeCells;
   }
 
+  function handleGameStart() {
+    setGameState({ ...INITIAL_GAME_STATE, isPlaying: true });
+  }
+
   return (
     <>
       <div className="top">
-        <div>
-          <span>POINTS </span>
-          <span className="score">X</span>
-        </div>
+        {isPlaying && (
+          <div>
+            <span>POINTS </span>
+            <span className="score">{score}</span>
+          </div>
+        )}
         <div>
           <span>RECORD </span>
-          <span className="record">Y</span>
+          <span className="record">{scoreRecord}</span>
         </div>
       </div>
       <div className="center">
@@ -98,10 +127,13 @@ function App() {
         <button onClick={() => addRandomPerson()}>REDRUM</button>
       </div>
       <div className="bottom">
-        <div>
-          <span>PAYMENT </span>
-          <span className="progress">X | X</span>
-        </div>
+        {!isPlaying && <button onClick={handleGameStart}>PLAY</button>}
+        {isPlaying && (
+          <div>
+            <span>PAYMENT </span>
+            <span className="progress">X | X</span>
+          </div>
+        )}
       </div>
     </>
   );
