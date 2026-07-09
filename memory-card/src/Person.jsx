@@ -48,7 +48,7 @@ async function fetchImageUrl(seed) {
   }
 }
 
-function Person({ seed, row, col }) {
+function Person({ seed, row, col, clickHandle }) {
     const [imgUrl, setimgUrl] = useState(null);
 
     useEffect(() => {
@@ -73,7 +73,7 @@ function Person({ seed, row, col }) {
     }, [seed]);
 
     return (
-      <div
+      <div onClick={clickHandle}
         className="person"
         style={{
           // Convert 0-based indices to 1-based CSS Grid lines (+1)
