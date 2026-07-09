@@ -14,13 +14,13 @@ function App() {
     ),
   );
 
-  function addGridItem(row, col) {
+  function addGridItem(rowIdx, colIdx) {
     const seed = generateSeed(8);
 
     setGridItems((prev) => {
       const next = [...prev];
-      next[row] = [...next[row]];
-      next[row][col] = { seed }; 
+      next[rowIdx] = [...next[rowIdx]];
+      next[rowIdx][colIdx] = { seed }; 
       return next;
     });
   }
@@ -34,6 +34,15 @@ function App() {
     console.log(freeCells);
     const cell = freeCells[Math.floor(Math.random() * freeCells.length)];
     addGridItem(cell.row, cell.col); 
+  }
+
+  function removePerson(rowIdx, colIdx) {
+    setGridItems((prev) => {
+      const next = [...prev];
+      next[rowIdx] = [...next[rowIdx]];
+      next[rowIdx][colIdx] = null; 
+      return next;
+    });
   }
 
   function getFreeCells() {
@@ -73,7 +82,15 @@ function App() {
           {gridItems.map((gridRow, rowIdx) =>
             gridRow.map((item, colIdx) => {
               return (
-                item && <Person key={item.seed} seed={item.seed} row={rowIdx} col={colIdx} />
+                item && (
+                  <Person
+                    key={item.seed}
+                    seed={item.seed}
+                    row={rowIdx}
+                    col={colIdx}
+                    clickHandle={() => removePerson(rowIdx, colIdx)}
+                  />
+                )
               );
             }),
           )}
