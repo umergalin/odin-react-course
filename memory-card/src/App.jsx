@@ -89,7 +89,7 @@ function App() {
   return (
     <>
       <div className="top">
-        {isPlaying && (
+        {gameState.isPlaying && (
           <div>
             <span>POINTS </span>
             <span className="score">{score}</span>
@@ -127,8 +127,8 @@ function App() {
         <button onClick={() => addRandomPerson()}>REDRUM</button>
       </div>
       <div className="bottom">
-        {!isPlaying && <button onClick={handleGameStart}>PLAY</button>}
-        {isPlaying && (
+        {!gameState.isPlaying && <button onClick={handleGameStart}>PLAY</button>}
+        {gameState.isPlaying && (
           <div>
             <span>PAYMENT </span>
             <span className="progress">X | X</span>
