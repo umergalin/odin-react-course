@@ -8,9 +8,10 @@ const HALF_COLLS_COUNT = 2; // one side def prevents even grid
 const TOTAL_ROWS_COUNT = 4;
 
 const DIFFICULTY_SETTINGS = {
-  basePeopleCount: 1,
-  scalingFactor: 1.2,
-  formula: (round) => basePeopleCount * scalingFactor * Math.sqrt(round),
+  basePeopleCount: 2,
+  scalingFactor: 3.5,
+  peopleCountFormula: (round) => Math.round(basePeopleCount * Math.sqrt(scalingFactor * round)),
+  alightingFormula: (peopleCount) => peopleCount * 0.5,
   maxPeople: HALF_COLLS_COUNT * 2 * TOTAL_ROWS_COUNT,
 };
 
@@ -128,15 +129,4 @@ function App() {
       </div>
       <div className="bottom">
         {!gameState.isPlaying && <button onClick={handleGameStart}>PLAY</button>}
-        {gameState.isPlaying && (
-          <div>
-            <span>PAYMENT </span>
-            <span className="progress">X | X</span>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-export default App;
+;
