@@ -27,6 +27,7 @@ function App() {
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [round, setRound] = useState(0);
+  const [showOverlay, setShowOverlay] = useState(false);
 
   const [gridItems, setGridItems] = useState(
     Array.from(Array(TOTAL_ROWS_COUNT), () =>
@@ -118,17 +119,21 @@ function App() {
                     seed={item.seed}
                     row={rowIdx}
                     col={colIdx}
-                    clickHandle={() => removePerson(rowIdx, colIdx)}
+                    clickHandle={removePerson}
                   />
                 )
               );
             }),
           )}
         </div>
+        <div className={`overlay ${showOverlay ? "show" : ""}`}></div>
+        <div></div>
         <button onClick={() => addRandomPerson()}>REDRUM</button>
       </div>
       <div className="bottom">
-        {!gameState.isPlaying && <button onClick={handleGameStart}>PLAY</button>}
+        {!gameState.isPlaying && (
+          <button onClick={handleGameStart}>PLAY</button>
+        )}
         {gameState.isPlaying && (
           <div>
             <span>PAYMENT </span>

@@ -73,7 +73,7 @@ function Person({ seed, row, col, clickHandle }) {
     }, [seed]);
 
     return (
-      <div onClick={clickHandle}
+      <div onClick={() => clickHandle(row, col)}
         className="person"
         style={{
           // Convert 0-based indices to 1-based CSS Grid lines (+1)
