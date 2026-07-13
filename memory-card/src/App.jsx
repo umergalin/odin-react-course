@@ -129,4 +129,15 @@ function App() {
       </div>
       <div className="bottom">
         {!gameState.isPlaying && <button onClick={handleGameStart}>PLAY</button>}
-;
+        {gameState.isPlaying && (
+          <div>
+            <span>PAYMENT </span>
+            <span className="progress">X | X</span>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default App;
