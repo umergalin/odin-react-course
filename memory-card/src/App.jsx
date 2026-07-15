@@ -84,7 +84,16 @@ function App() {
     return freeCells;
   }
 
+  function generatePersonChunk() {
+    setShowOverlay(true);
+  }
+
+  function startNewRound() {
+    generatePersonChunk();
+  }
+
   function handleGameStart() {
+    startNewRound();
     setGameState({ ...INITIAL_GAME_STATE, isPlaying: true });
   }
 
