@@ -5,6 +5,7 @@ import { generateSeed } from "./js/utils.js";
 import Person from "./Person.jsx";
 
 const HALF_COLLS_COUNT = 2; // one side def prevents even grid
+const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
 const TOTAL_ROWS_COUNT = 4;
 
 const DIFFICULTY_SETTINGS = {
@@ -71,15 +72,23 @@ function App() {
   }
 
   function getFreeCells() {
+    const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
+
+    persons.forEach((person) => {
+      occupied[person.row * TOTAL_COLLS_COUNT + person.col] = true;
+    });
+
     const freeCells = [];
 
-    gridItems.forEach((row, rowIdx) => {
-      row.forEach((cell, colIdx) => {
-        if (cell === null && colIdx !== HALF_COLLS_COUNT) {
-          freeCells.push([rowIdx, colIdx]);
+    for (let row = 0; row < TOTAL_ROWS_COUNT; row++) {
+      for (let col = 0; col < TOTAL_COLLS_COUNT; col++) {
+        if (col === HALF_COLLS_COUNT) continue; // skip center column
+
+        if (!occupied[row * TOTAL_COLLS_COUNT + col]) {
+          freeCells.push([row, col]);
         }
-      });
-    });
+      }
+    }
 
     return freeCells;
   }
