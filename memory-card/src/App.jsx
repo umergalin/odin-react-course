@@ -46,10 +46,6 @@ function App() {
     });
   }
 
-  function getTargetPersonCount() {
-
-  }
-
   function addRandomPerson() {
     const freeCells = getFreeCells();
     if (freeCells.length === 0) {
