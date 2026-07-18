@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { getImage } from "./imageCash";
 
 const PERSON_GEN_ARGS = {
   skinColor: [
@@ -22,7 +23,7 @@ const PERSON_GEN_ARGS = {
     .join(","),
 };
 
-async function fetchImageUrl(seed) {
+function getImageUrl(seed) {
   const baseUrl = "https://api.dicebear.com/10.x/dylan/svg";
 
   const query = [
@@ -33,57 +34,42 @@ async function fetchImageUrl(seed) {
 
   const url = `${baseUrl}?${query}`;
 
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Can't get character image: ${response.status}`);
-    }
-
-    const blob = await response.blob();
-    const imgUrl = URL.createObjectURL(blob); // CREATING MEMORY LEAK
-    return imgUrl;
-  } catch (error) {
-    console.error(error.message);
-  }
+  return url;
 }
 
 function Person({ seed, row, col, clickHandle }) {
-    const [imgUrl, setimgUrl] = useState(null);
+  const [imgObjUrl, setImgObjUrl] = useState(null);
 
-    useEffect(() => {
-      let objectUrl = null;
-      let ignoreResult = false;
+  useEffect(() => {
+    let objectUrl = null;
+    let ignoreResult = false;
 
-      fetchImageUrl(seed).then((url) => {
-        objectUrl = url;
-        if (!ignoreResult) {
-          setimgUrl(url);
-        } else {
-          URL.revokeObjectURL(url);
-        }
-      });
+    getImage(getImageUrl(seed)).then((objUrl) => {
+      if (!ignoreResult) {
+        setImgObjUrl(objUrl);
+      }
+    });
 
-      return () => {
-        ignoreResult = true;
-        if (objectUrl) {
-          URL.revokeObjectURL(objectUrl);
-        }
-      };
-    }, [seed]);
+    return () => {
+      // WARNING: Not aborting the download
+      // the final image will remain in the global cache.
+      ignoreResult = true;
+    };
+  }, [seed]);
 
-    return (
-      <div onClick={() => clickHandle(row, col)}
-        className="person"
-        style={{
-          // Convert 0-based indices to 1-based CSS Grid lines (+1)
-          gridRow: `${row + 1} / ${row + 2}`,
-          gridColumn: `${col + 1} / ${col + 2}`,
-        }}
-      >
-        {imgUrl && <img src={imgUrl} alt="character" />}
-      </div>
-    );
+  return (
+    <div
+      onClick={() => clickHandle(row, col)}
+      className="person"
+      style={{
+        // Convert 0-based indices to 1-based CSS Grid lines (+1)
+        gridRow: `${row + 1} / ${row + 2}`,
+        gridColumn: `${col + 1} / ${col + 2}`,
+      }}
+    >
+      {imgObjUrl && <img src={imgObjUrl} alt="character" />}
+    </div>
+  );
 }
 
 export default Person;
