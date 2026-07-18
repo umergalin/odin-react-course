@@ -32,21 +32,6 @@ function App() {
 
   const [persons, setPersons] = useState([]);
 
-  const [gridItems, setGridItems] = useState(
-    Array.from(Array(TOTAL_ROWS_COUNT), () =>
-      Array(HALF_COLLS_COUNT * 2 + 1).fill(null), // adding extra coll for spacing
-    ),
-  );
-
-  function addPersonToGrid(rowIdx, colIdx) {
-    setGridItems((prev) => {
-      const next = [...prev];
-      next[rowIdx] = [...next[rowIdx]];
-      next[rowIdx][colIdx] = true; 
-      return next;
-    });
-  }
-
   function createRandomPerson() {
     const freeCells = getFreeCells();
     if (freeCells.length === 0) {
@@ -58,8 +43,6 @@ function App() {
     const newPerson = { seed: generateSeed(8), row: row, col: col };
 
     setPersons((prev) => [...prev, newPerson]);
-
-    addPersonToGrid(newPerson.row, newPerson.col); 
   }
 
   function removePerson(rowIdx, colIdx) {
