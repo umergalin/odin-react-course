@@ -22,6 +22,8 @@
 .overlay {
   display: none;
   position: absolute;
+  justify-content: center;
+  align-items: center;
   left: 0;
   top: 0;
   width: 100%;
