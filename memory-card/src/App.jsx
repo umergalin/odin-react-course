@@ -45,13 +45,10 @@ function App() {
     setPersons((prev) => [...prev, newPerson]);
   }
 
-  function removePerson(rowIdx, colIdx) {
-     setGridItems((prev) => {
-      const next = [...prev];
-      next[rowIdx] = [...next[rowIdx]];
-      next[rowIdx][colIdx] = null; 
-      return next;
-    });
+  function removePerson(row, col) {
+    setPersons((prev) =>
+      prev.filter((person) => person.row !== row || person.col !== col),
+    );
   }
 
   function getFreeCells() {
