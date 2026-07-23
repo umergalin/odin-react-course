@@ -3,6 +3,7 @@ import "./App.css";
 
 import { generateSeed } from "./js/utils.js";
 import Person from "./Person.jsx";
+import OverlayContainer from "./OverlayContainer.jsx";
 
 const HALF_COLLS_COUNT = 2; // one side def prevents even grid
 const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
@@ -28,9 +29,9 @@ function App() {
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [round, setRound] = useState(0);
-  const [showOverlay, setShowOverlay] = useState(false);
 
   const [persons, setPersons] = useState([]);
+  const [newPersonsCount, setNewPersonsCount] = useState(0);
 
   function createRandomPerson() {
     const freeCells = getFreeCells();
@@ -73,12 +74,15 @@ function App() {
     return freeCells;
   }
 
-  function generatePersonChunk() {
-    setShowOverlay(true);
+  function generatePersonChunk(count) {
+    for (let i = 0; i < count; i++) {
+      createRandomPerson();
+    }
+    setNewPersonsCount(count);
   }
 
   function startNewRound() {
-    generatePersonChunk();
+    generatePersonChunk(3); // generating 3 only for tests (change to change to func later)
   }
 
   function handleGameStart() {
@@ -133,9 +137,10 @@ function App() {
           </div>
         )}
       </div>
-      <div className={`overlay ${showOverlay ? "show" : ""}`}>
-        <div className="new-persons-list"></div>
-      </div>
+      <OverlayContainer
+        newPersonsCount={newPersonsCount}
+        persons={persons}
+      />
     </>
   );
 }
