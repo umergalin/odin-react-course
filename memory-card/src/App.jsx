@@ -33,25 +33,6 @@ function App() {
   const [persons, setPersons] = useState([]);
   const [newPersonsCount, setNewPersonsCount] = useState(0);
 
-  function createRandomPerson() {
-    const freeCells = getFreeCells();
-    if (freeCells.length === 0) {
-      console.log("can't add person: no more space in grid");
-      return;
-    }
-
-    const [row, col] = freeCells[Math.floor(Math.random() * freeCells.length)];
-    const newPerson = { seed: generateSeed(8), row: row, col: col };
-
-    setPersons((prev) => [...prev, newPerson]);
-  }
-
-  function removePerson(row, col) {
-    setPersons((prev) =>
-      prev.filter((person) => person.row !== row || person.col !== col),
-    );
-  }
-
   function getFreeCells() {
     const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
 
@@ -74,15 +55,28 @@ function App() {
     return freeCells;
   }
 
-  function generatePersonChunk(count) {
-    for (let i = 0; i < count; i++) {
-      createRandomPerson();
+  function createPersonChunk(count) {
+    const freeCells = getFreeCells();
+    const newPersons = [];
+
+    for (let i = 0; i < count && freeCells.length > 0; i++) {
+      const randomIndex = Math.floor(Math.random() * freeCells.length);
+      const [row, col] = freeCells.splice(randomIndex, 1)[0];
+      newPersons.push({ seed: generateSeed(8), row: row, col: col });
     }
-    setNewPersonsCount(count);
+
+    setPersons((prev) => [...prev, ...newPersons]);
+    setNewPersonsCount(newPersons.length);
+  }
+
+  function removePerson(row, col) {
+    setPersons((prev) =>
+      prev.filter((person) => person.row !== row || person.col !== col),
+    );
   }
 
   function startNewRound() {
-    generatePersonChunk(3); // generating 3 only for tests (change to change to func later)
+    createPersonChunk(3); // generating 3 only for tests (change to change to func later)
   }
 
   function handleGameStart() {
