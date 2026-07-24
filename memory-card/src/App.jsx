@@ -3,8 +3,10 @@ import "./App.css";
 
 import { generateSeed } from "./js/utils.js";
 import Person from "./Person.jsx";
+import OverlayContainer from "./OverlayContainer.jsx";
 
 const HALF_COLLS_COUNT = 2; // one side def prevents even grid
+const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
 const TOTAL_ROWS_COUNT = 4;
 
 const DIFFICULTY_SETTINGS = {
@@ -27,60 +29,64 @@ function App() {
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [round, setRound] = useState(0);
-  const [showOverlay, setShowOverlay] = useState(false);
 
-  const [gridItems, setGridItems] = useState(
-    Array.from(Array(TOTAL_ROWS_COUNT), () =>
-      Array(HALF_COLLS_COUNT * 2 + 1).fill(null), // adding extra coll for spacing
-    ),
-  );
+  const [persons, setPersons] = useState([]);
+  const [newPersonsCount, setNewPersonsCount] = useState(0);
 
-  function addGridItem(rowIdx, colIdx) {
-    const seed = generateSeed(8);
-
-    setGridItems((prev) => {
-      const next = [...prev];
-      next[rowIdx] = [...next[rowIdx]];
-      next[rowIdx][colIdx] = { seed }; 
-      return next;
-    });
-  }
-
-  function addRandomPerson() {
+  function createRandomPerson() {
     const freeCells = getFreeCells();
     if (freeCells.length === 0) {
       console.log("can't add person: no more space in grid");
       return;
     }
-    console.log(freeCells);
-    const cell = freeCells[Math.floor(Math.random() * freeCells.length)];
-    addGridItem(cell.row, cell.col); 
+
+    const [row, col] = freeCells[Math.floor(Math.random() * freeCells.length)];
+    const newPerson = { seed: generateSeed(8), row: row, col: col };
+
+    setPersons((prev) => [...prev, newPerson]);
   }
 
-  function removePerson(rowIdx, colIdx) {
-     setGridItems((prev) => {
-      const next = [...prev];
-      next[rowIdx] = [...next[rowIdx]];
-      next[rowIdx][colIdx] = null; 
-      return next;
-    });
+  function removePerson(row, col) {
+    setPersons((prev) =>
+      prev.filter((person) => person.row !== row || person.col !== col),
+    );
   }
 
   function getFreeCells() {
+    const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
+
+    persons.forEach((person) => {
+      occupied[person.row * TOTAL_COLLS_COUNT + person.col] = true;
+    });
+
     const freeCells = [];
 
-    gridItems.forEach((row, rowIdx) => {
-      row.forEach((cell, colIdx) => {
-        if (cell === null && colIdx !== HALF_COLLS_COUNT) {
-          freeCells.push({ row: rowIdx, col: colIdx });
+    for (let row = 0; row < TOTAL_ROWS_COUNT; row++) {
+      for (let col = 0; col < TOTAL_COLLS_COUNT; col++) {
+        if (col === HALF_COLLS_COUNT) continue; // skip center column
+
+        if (!occupied[row * TOTAL_COLLS_COUNT + col]) {
+          freeCells.push([row, col]);
         }
-      });
-    });
+      }
+    }
 
     return freeCells;
   }
 
+  function generatePersonChunk(count) {
+    for (let i = 0; i < count; i++) {
+      createRandomPerson();
+    }
+    setNewPersonsCount(count);
+  }
+
+  function startNewRound() {
+    generatePersonChunk(3); // generating 3 only for tests (change to change to func later)
+  }
+
   function handleGameStart() {
+    startNewRound();
     setGameState({ ...INITIAL_GAME_STATE, isPlaying: true });
   }
 
@@ -106,25 +112,19 @@ function App() {
             "--total-rows-count": TOTAL_ROWS_COUNT,
           }}
         >
-          {gridItems.map((gridRow, rowIdx) =>
-            gridRow.map((item, colIdx) => {
-              return (
-                item && (
-                  <Person
-                    key={item.seed}
-                    seed={item.seed}
-                    row={rowIdx}
-                    col={colIdx}
-                    clickHandle={removePerson}
-                  />
-                )
-              );
-            }),
-          )}
+          {persons.map(({ seed, row, col }) => (
+            <Person
+              key={seed}
+              seed={seed}
+              row={row}
+              col={col}
+              clickHandle={removePerson}
+            />
+          ))}
         </div>
-        <div className={`overlay ${showOverlay ? "show" : ""}`}></div>
+
         <div></div>
-        <button onClick={() => addRandomPerson()}>REDRUM</button>
+        <button onClick={() => createRandomPerson()}>REDRUM</button>
       </div>
       <div className="bottom">
         {!gameState.isPlaying && (
@@ -137,6 +137,10 @@ function App() {
           </div>
         )}
       </div>
+      <OverlayContainer
+        newPersonsCount={newPersonsCount}
+        persons={persons}
+      />
     </>
   );
 }
