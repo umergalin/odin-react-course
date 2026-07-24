@@ -10,40 +10,27 @@ function OverlayContainer ({newPersonsCount, persons}) {
       setIsMounted(true);
     }
 
-    useEffect(() => {
-      if (!isMounted) return;
-
-      const timer = setTimeout(() => {
-        setIsMounted(false);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }, [isMounted]);
-
     if (!isMounted) return null;
 
-    const handleTransitionEnd = () => {
+    const onDismiss = () => {
       setIsMounted(false);
     };
 
     return (
       <div
         className={`overlay ${isMounted ? "show" : ""}`}
-      > <p>Some people entered the bus...</p>
+        onClick={onDismiss}
+      >
+        <p>Some people entered the bus...</p>
         {isMounted && (
           <div className="new-persons-list">
-            {persons
-              .slice(-newPersonsCount)
-              .map(({ seed, row, col }) => (
-                <Person
-                  key={seed}
-                  seed={seed}
-                  row={row}
-                  col={col}
-                />
-              ))}
+            {persons.slice(-newPersonsCount).map(({ seed, row, col }) => (
+              <Person key={seed} seed={seed} row={row} col={col} />
+            ))}
           </div>
         )}
+        
+        <p>Click to continue</p>
       </div>
     );
 }
