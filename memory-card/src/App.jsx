@@ -31,7 +31,7 @@ function App() {
   const [round, setRound] = useState(0);
 
   const [persons, setPersons] = useState([]);
-  const [newPersonsCount, setNewPersonsCount] = useState(0);
+  const [newPersonsCount, setNewPersonsCount] = useState({ total: 0, paid: 0 });
 
   function getFreeCells() {
     const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
@@ -62,11 +62,11 @@ function App() {
     for (let i = 0; i < count && freeCells.length > 0; i++) {
       const randomIndex = Math.floor(Math.random() * freeCells.length);
       const [row, col] = freeCells.splice(randomIndex, 1)[0];
-      newPersons.push({ seed: generateSeed(8), row: row, col: col });
+      newPersons.push({ seed: generateSeed(8), row: row, col: col, hasPaid: false });
     }
 
     setPersons((prev) => [...prev, ...newPersons]);
-    setNewPersonsCount(newPersons.length);
+    setNewPersonsCount({total: count, paid: 0});
   }
 
   function removePerson(row, col) {
@@ -127,14 +127,11 @@ function App() {
         {gameState.isPlaying && (
           <div>
             <span>PAYMENT </span>
-            <span className="progress">X | X</span>
+            <span className="progress">{newPersonsCount.paid} | {newPersonsCount.total}</span>
           </div>
         )}
       </div>
-      <OverlayContainer
-        newPersonsCount={newPersonsCount}
-        persons={persons}
-      />
+      <OverlayContainer newPersonsCount={newPersonsCount.total} persons={persons} />
     </>
   );
 }
