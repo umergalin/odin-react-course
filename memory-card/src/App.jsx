@@ -23,14 +23,14 @@ const DIFFICULTY_SETTINGS = {
 
 function App() {
   const [scoreRecord, setScoreRecord] = useState(0);
-  
+
   const [isPlaying, setIsPlaying] = useState(false);
-  const [round, setRound] = useState(0);
+  const [roundCount, setRoundCount] = useState(0);
   const [score, setScore] = useState(0);
 
   const [persons, setPersons] = useState([]);
   const [newPersonsCount, setNewPersonsCount] = useState(0);
-  const unpaidPersonsCount = persons.filter(p => !p.hasPaid).length;
+  const unpaidPersonsCount = persons.filter((p) => !p.hasPaid).length;
 
   function getFreeCells() {
     const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
@@ -61,7 +61,12 @@ function App() {
     for (let i = 0; i < count && freeCells.length > 0; i++) {
       const randomIndex = Math.floor(Math.random() * freeCells.length);
       const [row, col] = freeCells.splice(randomIndex, 1)[0];
-      newPersons.push({ seed: generateSeed(8), row: row, col: col, hasPaid: false });
+      newPersons.push({
+        seed: generateSeed(8),
+        row: row,
+        col: col,
+        hasPaid: false,
+      });
     }
 
     setPersons((prev) => [...prev, ...newPersons]);
@@ -89,10 +94,12 @@ function App() {
 
   function startNewRound() {
     createPersonChunk(3); // generating 3 only for tests (change to change to func later)
+    setRoundCount((prev) => prev + 1);
   }
 
   function handleGameStart() {
     setIsPlaying(true);
+    setRoundCount(0);
     startNewRound();
   }
 
@@ -130,17 +137,24 @@ function App() {
         </div>
       </div>
       <div className="bottom">
-        {!isPlaying && (
-          <button onClick={handleGameStart}>PLAY</button>
-        )}
+        {!isPlaying && <button onClick={handleGameStart}>PLAY</button>}
         {isPlaying && (
           <div>
             <span>PAYMENT </span>
-            <span className="progress">{newPersonsCount - unpaidPersonsCount} | {newPersonsCount}</span>
+            <span className="progress">
+              {newPersonsCount - unpaidPersonsCount} | {newPersonsCount}
+            </span>
           </div>
         )}
       </div>
-      <OverlayContainer newPersonsCount={newPersonsCount} persons={persons} />
+      {isPlaying && (
+        <OverlayContainer
+          key={roundCount}
+          roundCount={roundCount}
+          newPersonsCount={newPersonsCount}
+          persons={persons}
+        />
+      )}
     </>
   );
 }
