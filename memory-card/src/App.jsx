@@ -31,7 +31,7 @@ function App() {
   const [round, setRound] = useState(0);
 
   const [persons, setPersons] = useState([]);
-  const [newPersonsCount, setNewPersonsCount] = useState({ total: 0, paid: 0 });
+  const [newPersonsCount, setNewPersonsCount] = useState(0);
 
   function getFreeCells() {
     const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
@@ -66,12 +66,23 @@ function App() {
     }
 
     setPersons((prev) => [...prev, ...newPersons]);
-    setNewPersonsCount({total: count, paid: 0});
+    setNewPersonsCount(newPersons.length);
   }
 
   function removePerson(row, col) {
     setPersons((prev) =>
       prev.filter((person) => person.row !== row || person.col !== col),
+    );
+  }
+
+  function handlePersonClick(targetSeed) {
+    const target = persons.find((p) => p.seed === targetSeed);
+    if (!target || target.hasPaid) return;
+
+    setPersons((prev) =>
+      prev.map((person) =>
+        person.seed === targetSeed ? { ...person, hasPaid: true } : person,
+      ),
     );
   }
 
@@ -112,7 +123,7 @@ function App() {
               seed={seed}
               row={row}
               col={col}
-              clickHandle={removePerson}
+              clickHandle={handlePersonClick}
             />
           ))}
         </div>
@@ -127,11 +138,11 @@ function App() {
         {gameState.isPlaying && (
           <div>
             <span>PAYMENT </span>
-            <span className="progress">{newPersonsCount.paid} | {newPersonsCount.total}</span>
+            <span className="progress">{persons.filter(p => p.hasPaid).length} | {newPersonsCount}</span>
           </div>
         )}
       </div>
-      <OverlayContainer newPersonsCount={newPersonsCount.total} persons={persons} />
+      <OverlayContainer newPersonsCount={newPersonsCount} persons={persons} />
     </>
   );
 }
