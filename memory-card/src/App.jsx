@@ -12,26 +12,25 @@ const TOTAL_ROWS_COUNT = 4;
 const DIFFICULTY_SETTINGS = {
   basePeopleCount: 2,
   scalingFactor: 3.5,
-  peopleCountFormula: (round) => Math.round(basePeopleCount * Math.sqrt(scalingFactor * round)),
+  peopleCountFormula: (round) =>
+    Math.round(
+      DIFFICULTY_SETTINGS.basePeopleCount *
+        Math.sqrt(DIFFICULTY_SETTINGS.scalingFactor * round),
+    ),
   alightingFormula: (peopleCount) => peopleCount * 0.5,
   maxPeople: HALF_COLLS_COUNT * 2 * TOTAL_ROWS_COUNT,
 };
 
-const INITIAL_GAME_STATE = {
-  isPlaying: false,
-  score: 0,
-  round: 1,
-};
-
 function App() {
   const [scoreRecord, setScoreRecord] = useState(0);
-  const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
-  const [score, setScore] = useState(0);
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const [round, setRound] = useState(0);
+  const [score, setScore] = useState(0);
 
   const [persons, setPersons] = useState([]);
   const [newPersonsCount, setNewPersonsCount] = useState(0);
+  const unpaidPersonsCount = persons.filter(p => !p.hasPaid).length;
 
   function getFreeCells() {
     const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
@@ -84,6 +83,8 @@ function App() {
         person.seed === targetSeed ? { ...person, hasPaid: true } : person,
       ),
     );
+
+    if (unpaidPersonsCount === 1) startNewRound();
   }
 
   function startNewRound() {
@@ -91,14 +92,14 @@ function App() {
   }
 
   function handleGameStart() {
+    setIsPlaying(true);
     startNewRound();
-    setGameState({ ...INITIAL_GAME_STATE, isPlaying: true });
   }
 
   return (
     <>
       <div className="top">
-        {gameState.isPlaying && (
+        {isPlaying && (
           <div>
             <span>POINTS </span>
             <span className="score">{score}</span>
@@ -127,18 +128,15 @@ function App() {
             />
           ))}
         </div>
-
-        <div></div>
-        <button onClick={() => createRandomPerson()}>REDRUM</button>
       </div>
       <div className="bottom">
-        {!gameState.isPlaying && (
+        {!isPlaying && (
           <button onClick={handleGameStart}>PLAY</button>
         )}
-        {gameState.isPlaying && (
+        {isPlaying && (
           <div>
             <span>PAYMENT </span>
-            <span className="progress">{persons.filter(p => p.hasPaid).length} | {newPersonsCount}</span>
+            <span className="progress">{newPersonsCount - unpaidPersonsCount} | {newPersonsCount}</span>
           </div>
         )}
       </div>
