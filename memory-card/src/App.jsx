@@ -9,9 +9,33 @@ const HALF_COLLS_COUNT = 2; // one side def prevents even grid
 const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
 const TOTAL_ROWS_COUNT = 4;
 
+const MAX_EMPTY_CELL_COUNT = 2;
 const DIFFICULTY_GROWTH_RATE = 1;
-function getNewPeopleCount(round) {
+
+function getNewPersonsCount(round) {
   return Math.round(Math.sqrt(round * DIFFICULTY_GROWTH_RATE));
+}
+
+function getFreeCells(currentPersons) {
+  const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
+
+  currentPersons.forEach((currentPerson) => {
+    occupied[currentPerson.row * TOTAL_COLLS_COUNT + currentPerson.col] = true;
+  });
+
+  const freeCells = [];
+
+  for (let row = 0; row < TOTAL_ROWS_COUNT; row++) {
+    for (let col = 0; col < TOTAL_COLLS_COUNT; col++) {
+      if (col === HALF_COLLS_COUNT) continue; // skip center column
+
+      if (!occupied[row * TOTAL_COLLS_COUNT + col]) {
+        freeCells.push([row, col]);
+      }
+    }
+  }
+
+  return freeCells;
 }
 
 function App() {
@@ -22,47 +46,40 @@ function App() {
   const [score, setScore] = useState(0);
 
   const [persons, setPersons] = useState([]);
-  const newPersonsCount = getNewPeopleCount(roundCount);
+  const newPersonsCount = getNewPersonsCount(roundCount);
   const unpaidPersonsCount = persons.filter((p) => !p.hasPaid).length;
 
-  function getFreeCells() {
-    const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
+  function prepareBoardSpace(nextNewPersonsCount) {
+    const targetEmptyCells = Math.floor(Math.random() * MAX_EMPTY_CELL_COUNT);
+    const maxSpace = TOTAL_ROWS_COUNT * HALF_COLLS_COUNT * 2;
 
-    persons.forEach((person) => {
-      occupied[person.row * TOTAL_COLLS_COUNT + person.col] = true;
+    console.log("random empy space: " + targetEmptyCells);
+
+    setPersons((prevPersons) => {
+      const excessCount =
+        targetEmptyCells + prevPersons.length + nextNewPersonsCount - maxSpace;
+      return excessCount <= 0 ? prevPersons : prevPersons.slice(excessCount);
     });
-
-    const freeCells = [];
-
-    for (let row = 0; row < TOTAL_ROWS_COUNT; row++) {
-      for (let col = 0; col < TOTAL_COLLS_COUNT; col++) {
-        if (col === HALF_COLLS_COUNT) continue; // skip center column
-
-        if (!occupied[row * TOTAL_COLLS_COUNT + col]) {
-          freeCells.push([row, col]);
-        }
-      }
-    }
-
-    return freeCells;
   }
 
   function createPersonChunk(count) {
-    const freeCells = getFreeCells();
-    const newPersons = [];
+    setPersons((prevPersons) => {
+      const freeCells = getFreeCells(prevPersons);
+      const newPersons = [];
 
-    for (let i = 0; i < count && freeCells.length > 0; i++) {
-      const randomIndex = Math.floor(Math.random() * freeCells.length);
-      const [row, col] = freeCells.splice(randomIndex, 1)[0];
-      newPersons.push({
-        seed: generateSeed(8),
-        row: row,
-        col: col,
-        hasPaid: false,
-      });
-    }
+      for (let i = 0; i < count && freeCells.length > 0; i++) {
+        const randomIndex = Math.floor(Math.random() * freeCells.length);
+        const [row, col] = freeCells.splice(randomIndex, 1)[0];
+        newPersons.push({
+          seed: generateSeed(8),
+          row: row,
+          col: col,
+          hasPaid: false,
+        });
+      }
 
-    setPersons((prev) => [...prev, ...newPersons]);
+      return [...prevPersons, ...newPersons];
+    });
   }
 
   function removePerson(row, col) {
@@ -88,7 +105,8 @@ function App() {
     const nextRound = roundCount + 1;
     setRoundCount(nextRound);
     
-    const nextNewPersonsCount = getNewPeopleCount(nextRound);
+    const nextNewPersonsCount = getNewPersonsCount(nextRound);
+    prepareBoardSpace(nextNewPersonsCount);
     createPersonChunk(nextNewPersonsCount);
   }
 
