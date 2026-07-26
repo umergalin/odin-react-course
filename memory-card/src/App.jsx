@@ -9,17 +9,10 @@ const HALF_COLLS_COUNT = 2; // one side def prevents even grid
 const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
 const TOTAL_ROWS_COUNT = 4;
 
-const DIFFICULTY_SETTINGS = {
-  basePeopleCount: 2,
-  scalingFactor: 3.5,
-  peopleCountFormula: (round) =>
-    Math.round(
-      DIFFICULTY_SETTINGS.basePeopleCount *
-        Math.sqrt(DIFFICULTY_SETTINGS.scalingFactor * round),
-    ),
-  alightingFormula: (peopleCount) => peopleCount * 0.5,
-  maxPeople: HALF_COLLS_COUNT * 2 * TOTAL_ROWS_COUNT,
-};
+const DIFFICULTY_GROWTH_RATE = 1;
+function getNewPeopleCount(round) {
+  return Math.round(Math.sqrt(round * DIFFICULTY_GROWTH_RATE));
+}
 
 function App() {
   const [scoreRecord, setScoreRecord] = useState(0);
@@ -29,7 +22,7 @@ function App() {
   const [score, setScore] = useState(0);
 
   const [persons, setPersons] = useState([]);
-  const [newPersonsCount, setNewPersonsCount] = useState(0);
+  const newPersonsCount = getNewPeopleCount(roundCount);
   const unpaidPersonsCount = persons.filter((p) => !p.hasPaid).length;
 
   function getFreeCells() {
@@ -70,7 +63,6 @@ function App() {
     }
 
     setPersons((prev) => [...prev, ...newPersons]);
-    setNewPersonsCount(newPersons.length);
   }
 
   function removePerson(row, col) {
@@ -93,8 +85,11 @@ function App() {
   }
 
   function startNewRound() {
-    createPersonChunk(3); // generating 3 only for tests (change to change to func later)
-    setRoundCount((prev) => prev + 1);
+    const nextRound = roundCount + 1;
+    setRoundCount(nextRound);
+    
+    const nextNewPersonsCount = getNewPeopleCount(nextRound);
+    createPersonChunk(nextNewPersonsCount);
   }
 
   function handleGameStart() {
