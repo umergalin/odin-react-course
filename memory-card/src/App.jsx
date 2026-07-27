@@ -91,8 +91,15 @@ function App() {
   }
 
   function handlePersonClick(targetSeed) {
+    if (!isPlaying) return;
+
     const target = persons.find((p) => p.seed === targetSeed);
-    if (!target || target.hasPaid) return;
+    if (!target) return;
+
+    if (target.hasPaid) {
+      handleGameEnd();
+      return;
+    }
 
     setPersons((prev) =>
       prev.map((person) =>
@@ -113,9 +120,15 @@ function App() {
   }
 
   function handleGameStart() {
+    setPersons([]);
     setIsPlaying(true);
     setRoundCount(0);
     startNewRound();
+  }
+
+  function handleGameEnd() {
+    console.log("game ended");
+    setIsPlaying(false);
   }
 
   return (
