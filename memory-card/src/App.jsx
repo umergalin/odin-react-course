@@ -107,6 +107,8 @@ function App() {
       ),
     );
 
+    setScore(prevScore => score + 1);
+
     if (unpaidPersonsCount === 1) startNewRound();
   }
 
@@ -120,6 +122,7 @@ function App() {
   }
 
   function handleGameStart() {
+    setScore(0);
     setPersons([]);
     setIsPlaying(true);
     setRoundCount(0);
