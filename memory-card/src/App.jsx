@@ -10,10 +10,12 @@ const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
 const TOTAL_ROWS_COUNT = 4;
 
 const MAX_EMPTY_CELL_COUNT = 2;
+const MAX_NEW_PEOPLE_COUNT = 5;
 const DIFFICULTY_GROWTH_RATE = 1;
 
 function getNewPersonsCount(round) {
-  return Math.round(Math.sqrt(round * DIFFICULTY_GROWTH_RATE));
+  const newPersonsCount = Math.round(Math.sqrt(round * DIFFICULTY_GROWTH_RATE));
+  return Math.min(MAX_NEW_PEOPLE_COUNT, newPersonsCount);
 }
 
 function getFreeCells(currentPersons) {
