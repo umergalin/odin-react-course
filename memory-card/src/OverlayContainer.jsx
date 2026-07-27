@@ -2,13 +2,7 @@ import { useEffect, useState } from "react";
 import Person from "./Person";
 
 function OverlayContainer ({newPersonsCount, persons}) {
-    const [isMounted, setIsMounted] = useState(false);
-    const [prevPersonsCount, setPrevPersonsCount] = useState(0);
-
-    if (newPersonsCount >= 1 && prevPersonsCount !== newPersonsCount) {
-      setPrevPersonsCount(newPersonsCount);
-      setIsMounted(true);
-    }
+    const [isMounted, setIsMounted] = useState(true);
 
     if (!isMounted) return null;
 

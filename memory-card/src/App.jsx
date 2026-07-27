@@ -9,64 +9,79 @@ const HALF_COLLS_COUNT = 2; // one side def prevents even grid
 const TOTAL_COLLS_COUNT = HALF_COLLS_COUNT * 2 + 1;
 const TOTAL_ROWS_COUNT = 4;
 
-const DIFFICULTY_SETTINGS = {
-  basePeopleCount: 2,
-  scalingFactor: 3.5,
-  peopleCountFormula: (round) => Math.round(basePeopleCount * Math.sqrt(scalingFactor * round)),
-  alightingFormula: (peopleCount) => peopleCount * 0.5,
-  maxPeople: HALF_COLLS_COUNT * 2 * TOTAL_ROWS_COUNT,
-};
+const MAX_EMPTY_CELL_COUNT = 2;
+const MAX_NEW_PEOPLE_COUNT = 5;
+const DIFFICULTY_GROWTH_RATE = 1;
 
-const INITIAL_GAME_STATE = {
-  isPlaying: false,
-  score: 0,
-  round: 1,
-};
+function getNewPersonsCount(round) {
+  const newPersonsCount = Math.round(Math.sqrt(round * DIFFICULTY_GROWTH_RATE));
+  return Math.min(MAX_NEW_PEOPLE_COUNT, newPersonsCount);
+}
+
+function getFreeCells(currentPersons) {
+  const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
+
+  currentPersons.forEach((currentPerson) => {
+    occupied[currentPerson.row * TOTAL_COLLS_COUNT + currentPerson.col] = true;
+  });
+
+  const freeCells = [];
+
+  for (let row = 0; row < TOTAL_ROWS_COUNT; row++) {
+    for (let col = 0; col < TOTAL_COLLS_COUNT; col++) {
+      if (col === HALF_COLLS_COUNT) continue; // skip center column
+
+      if (!occupied[row * TOTAL_COLLS_COUNT + col]) {
+        freeCells.push([row, col]);
+      }
+    }
+  }
+
+  return freeCells;
+}
 
 function App() {
   const [scoreRecord, setScoreRecord] = useState(0);
-  const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
-  const [score, setScore] = useState(0);
+
   const [isPlaying, setIsPlaying] = useState(false);
-  const [round, setRound] = useState(0);
+  const [roundCount, setRoundCount] = useState(0);
+  const [score, setScore] = useState(0);
 
   const [persons, setPersons] = useState([]);
-  const [newPersonsCount, setNewPersonsCount] = useState(0);
+  const newPersonsCount = getNewPersonsCount(roundCount);
+  const unpaidPersonsCount = persons.filter((p) => !p.hasPaid).length;
 
-  function getFreeCells() {
-    const occupied = Array(TOTAL_ROWS_COUNT * TOTAL_COLLS_COUNT).fill(false);
+  function prepareBoardSpace(nextNewPersonsCount) {
+    const targetEmptyCells = Math.floor(Math.random() * MAX_EMPTY_CELL_COUNT);
+    const maxSpace = TOTAL_ROWS_COUNT * HALF_COLLS_COUNT * 2;
 
-    persons.forEach((person) => {
-      occupied[person.row * TOTAL_COLLS_COUNT + person.col] = true;
+    console.log("random empy space: " + targetEmptyCells);
+
+    setPersons((prevPersons) => {
+      const excessCount =
+        targetEmptyCells + prevPersons.length + nextNewPersonsCount - maxSpace;
+      return excessCount <= 0 ? prevPersons : prevPersons.slice(excessCount);
     });
-
-    const freeCells = [];
-
-    for (let row = 0; row < TOTAL_ROWS_COUNT; row++) {
-      for (let col = 0; col < TOTAL_COLLS_COUNT; col++) {
-        if (col === HALF_COLLS_COUNT) continue; // skip center column
-
-        if (!occupied[row * TOTAL_COLLS_COUNT + col]) {
-          freeCells.push([row, col]);
-        }
-      }
-    }
-
-    return freeCells;
   }
 
   function createPersonChunk(count) {
-    const freeCells = getFreeCells();
-    const newPersons = [];
+    setPersons((prevPersons) => {
+      const freeCells = getFreeCells(prevPersons);
+      const newPersons = [];
 
-    for (let i = 0; i < count && freeCells.length > 0; i++) {
-      const randomIndex = Math.floor(Math.random() * freeCells.length);
-      const [row, col] = freeCells.splice(randomIndex, 1)[0];
-      newPersons.push({ seed: generateSeed(8), row: row, col: col });
-    }
+      for (let i = 0; i < count && freeCells.length > 0; i++) {
+        const randomIndex = Math.floor(Math.random() * freeCells.length);
+        const [row, col] = freeCells.splice(randomIndex, 1)[0];
+        newPersons.push({
+          seed: generateSeed(8),
+          row: row,
+          col: col,
+          hasPaid: false,
+        });
+      }
 
-    setPersons((prev) => [...prev, ...newPersons]);
-    setNewPersonsCount(newPersons.length);
+      return [...prevPersons, ...newPersons];
+    });
   }
 
   function removePerson(row, col) {
@@ -75,19 +90,38 @@ function App() {
     );
   }
 
+  function handlePersonClick(targetSeed) {
+    const target = persons.find((p) => p.seed === targetSeed);
+    if (!target || target.hasPaid) return;
+
+    setPersons((prev) =>
+      prev.map((person) =>
+        person.seed === targetSeed ? { ...person, hasPaid: true } : person,
+      ),
+    );
+
+    if (unpaidPersonsCount === 1) startNewRound();
+  }
+
   function startNewRound() {
-    createPersonChunk(3); // generating 3 only for tests (change to change to func later)
+    const nextRound = roundCount + 1;
+    setRoundCount(nextRound);
+    
+    const nextNewPersonsCount = getNewPersonsCount(nextRound);
+    prepareBoardSpace(nextNewPersonsCount);
+    createPersonChunk(nextNewPersonsCount);
   }
 
   function handleGameStart() {
+    setIsPlaying(true);
+    setRoundCount(0);
     startNewRound();
-    setGameState({ ...INITIAL_GAME_STATE, isPlaying: true });
   }
 
   return (
     <>
       <div className="top">
-        {gameState.isPlaying && (
+        {isPlaying && (
           <div>
             <span>POINTS </span>
             <span className="score">{score}</span>
@@ -112,29 +146,30 @@ function App() {
               seed={seed}
               row={row}
               col={col}
-              clickHandle={removePerson}
+              clickHandle={handlePersonClick}
             />
           ))}
         </div>
-
-        <div></div>
-        <button onClick={() => createRandomPerson()}>REDRUM</button>
       </div>
       <div className="bottom">
-        {!gameState.isPlaying && (
-          <button onClick={handleGameStart}>PLAY</button>
-        )}
-        {gameState.isPlaying && (
+        {!isPlaying && <button onClick={handleGameStart}>PLAY</button>}
+        {isPlaying && (
           <div>
             <span>PAYMENT </span>
-            <span className="progress">X | X</span>
+            <span className="progress">
+              {newPersonsCount - unpaidPersonsCount} | {newPersonsCount}
+            </span>
           </div>
         )}
       </div>
-      <OverlayContainer
-        newPersonsCount={newPersonsCount}
-        persons={persons}
-      />
+      {isPlaying && (
+        <OverlayContainer
+          key={roundCount}
+          roundCount={roundCount}
+          newPersonsCount={newPersonsCount}
+          persons={persons}
+        />
+      )}
     </>
   );
 }
