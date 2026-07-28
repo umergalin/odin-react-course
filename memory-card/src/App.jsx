@@ -112,11 +112,10 @@ function App() {
 
     setScore(prevScore => prevScore + 1);
 
-    if (unpaidPersonsCount === 1) startNewRound();
+    if (unpaidPersonsCount === 1) startRound(roundCount + 1);
   }
 
-  function startNewRound() {
-    const nextRound = roundCount + 1;
+  function startRound(nextRound) {
     setRoundCount(nextRound);
     
     const nextNewPersonsCount = getNewPersonsCount(nextRound);
@@ -128,8 +127,7 @@ function App() {
     setScore(0);
     setPersons([]);
     setIsPlaying(true);
-    setRoundCount(0);
-    startNewRound();
+    startRound(1);
   }
 
   function handleGameEnd() {
