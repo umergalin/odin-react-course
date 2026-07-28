@@ -43,7 +43,9 @@ function getFreeCells(currentPersons) {
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [roundCount, setRoundCount] = useState(0);
-  
+
+  const [lives, setLives] = useState(0);
+
   const [score, setScore] = useState(0);
   const storedHighScore = Number(localStorage.getItem("highScore"));
   const [highScore, setHighScore] = useState(
@@ -100,7 +102,12 @@ function App() {
     if (!target) return;
 
     if (target.hasPaid) {
-      handleGameEnd();
+      if (lives <= 1) {
+        setLives(0);
+        handleGameEnd();
+      } else {
+        setLives((prevLives) => prevLives - 1);
+      }
       return;
     }
 
@@ -110,14 +117,14 @@ function App() {
       ),
     );
 
-    setScore(prevScore => prevScore + 1);
+    setScore((prevScore) => prevScore + 1);
 
     if (unpaidPersonsCount === 1) startRound(roundCount + 1);
   }
 
   function startRound(nextRound) {
     setRoundCount(nextRound);
-    
+
     const nextNewPersonsCount = getNewPersonsCount(nextRound);
     prepareBoardSpace(nextNewPersonsCount);
     createPersonChunk(nextNewPersonsCount);
@@ -125,14 +132,16 @@ function App() {
 
   function handleGameStart() {
     setScore(0);
+    setLives(3);
     setPersons([]);
     setIsPlaying(true);
+
     startRound(1);
   }
 
   function handleGameEnd() {
     setIsPlaying(false);
-    
+
     if (score > highScore) {
       localStorage.setItem("highScore", score);
       setHighScore(score);
@@ -142,16 +151,24 @@ function App() {
   return (
     <>
       <div className="top">
+        <div>
+          {isPlaying && (
+            <div>
+              <span>POINTS </span>
+              <span className="score">{score}</span>
+            </div>
+          )}
+          <div>
+            <span>RECORD </span>
+            <span className="record">{highScore}</span>
+          </div>
+        </div>
         {isPlaying && (
           <div>
-            <span>POINTS </span>
-            <span className="score">{score}</span>
+            <span>LIVES </span>
+            <span>{lives}</span>
           </div>
         )}
-        <div>
-          <span>RECORD </span>
-          <span className="record">{highScore}</span>
-        </div>
       </div>
       <div className="center">
         <div
