@@ -45,7 +45,10 @@ function App() {
   const [roundCount, setRoundCount] = useState(0);
   
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
+  const storedHighScore = Number(localStorage.getItem("highScore"));
+  const [highScore, setHighScore] = useState(
+    Number.isFinite(storedHighScore) ? storedHighScore : 0,
+  );
 
   const [persons, setPersons] = useState([]);
   const newPersonsCount = getNewPersonsCount(roundCount);
@@ -107,7 +110,7 @@ function App() {
       ),
     );
 
-    setScore(prevScore => score + 1);
+    setScore(prevScore => prevScore + 1);
 
     if (unpaidPersonsCount === 1) startNewRound();
   }
@@ -132,7 +135,10 @@ function App() {
   function handleGameEnd() {
     setIsPlaying(false);
     
-    if (score > highScore) setHighScore(score);
+    if (score > highScore) {
+      localStorage.setItem("highScore", score);
+      setHighScore(score);
+    }
   }
 
   return (
