@@ -41,11 +41,14 @@ function getFreeCells(currentPersons) {
 }
 
 function App() {
-  const [scoreRecord, setScoreRecord] = useState(0);
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [roundCount, setRoundCount] = useState(0);
+  
   const [score, setScore] = useState(0);
+  const storedHighScore = Number(localStorage.getItem("highScore"));
+  const [highScore, setHighScore] = useState(
+    Number.isFinite(storedHighScore) ? storedHighScore : 0,
+  );
 
   const [persons, setPersons] = useState([]);
   const newPersonsCount = getNewPersonsCount(roundCount);
@@ -107,6 +110,8 @@ function App() {
       ),
     );
 
+    setScore(prevScore => prevScore + 1);
+
     if (unpaidPersonsCount === 1) startNewRound();
   }
 
@@ -120,6 +125,7 @@ function App() {
   }
 
   function handleGameStart() {
+    setScore(0);
     setPersons([]);
     setIsPlaying(true);
     setRoundCount(0);
@@ -127,8 +133,12 @@ function App() {
   }
 
   function handleGameEnd() {
-    console.log("game ended");
     setIsPlaying(false);
+    
+    if (score > highScore) {
+      localStorage.setItem("highScore", score);
+      setHighScore(score);
+    }
   }
 
   return (
@@ -142,7 +152,7 @@ function App() {
         )}
         <div>
           <span>RECORD </span>
-          <span className="record">{scoreRecord}</span>
+          <span className="record">{highScore}</span>
         </div>
       </div>
       <div className="center">
