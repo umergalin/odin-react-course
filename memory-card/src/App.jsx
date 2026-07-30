@@ -190,7 +190,7 @@ function App() {
         </div>
       </div>
       <div className="bottom">
-        {!isPlaying && <button onClick={handleGameStart}>PLAY</button>}
+        {!isPlaying && <button className="text-primary play-btn" type="button" onClick={handleGameStart}>PLAY</button>}
         {isPlaying && (
           <div className="text-primary">
             <span>PAYMENT </span>
