@@ -1,6 +1,7 @@
 @import './index.css';
 
 :root {
+  --text-color-primary-dark: #383838;
   --text-color-primary: #4b4b4b;
   --text-color-secondary:  #777777;
   --text-size-primary: 3rem;
@@ -94,11 +95,22 @@
 .text-primary {
   font-size: var(--text-size-primary);
   color: var(--text-color-primary);
+  font-weight: 900;
   line-height: 1;
 }
 
 .text-secondary {
   font-size: var(--text-size-secondary);
   color: var(--text-color-secondary);
+}
+
+.play-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.play-btn:hover {
+  color: var(--text-color-primary-dark);
 }
 
