@@ -94,6 +94,7 @@
 .text-primary {
   font-size: var(--text-size-primary);
   color: var(--text-color-primary);
+  line-height: 1;
 }
 
 .text-secondary {
