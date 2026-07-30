@@ -153,13 +153,13 @@ function App() {
       <div className="top">
         <div>
           {isPlaying && (
-            <div>
+            <div className="score text-primary">
               <span>POINTS </span>
-              <span className="score">{score}</span>
+              <span>{score}</span>
             </div>
           )}
-          <div>
-            <span>RECORD </span>
+          <div className="text-secondary">
+            <span>HIGH SCORE </span>
             <span className="record">{highScore}</span>
           </div>
         </div>
@@ -192,7 +192,7 @@ function App() {
       <div className="bottom">
         {!isPlaying && <button onClick={handleGameStart}>PLAY</button>}
         {isPlaying && (
-          <div>
+          <div className="text-primary">
             <span>PAYMENT </span>
             <span className="progress">
               {newPersonsCount - unpaidPersonsCount} | {newPersonsCount}
