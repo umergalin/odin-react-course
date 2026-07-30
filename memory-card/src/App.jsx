@@ -151,9 +151,9 @@ function App() {
   return (
     <>
       <div className="top">
-        <div>
+        <div className="score">
           {isPlaying && (
-            <div className="score text-primary">
+            <div className="text-primary">
               <span>POINTS </span>
               <span>{score}</span>
             </div>
@@ -164,7 +164,7 @@ function App() {
           </div>
         </div>
         {isPlaying && (
-          <div>
+          <div className="lives">
             <span>LIVES </span>
             <span>{lives}</span>
           </div>
