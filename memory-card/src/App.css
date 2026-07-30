@@ -1,15 +1,40 @@
 @import './index.css';
 
+:root {
+  --text-color-primary: #4b4b4b;
+  --text-color-secondary:  #777777;
+  --text-size-primary: 3rem;
+  --text-size-secondary: 1rem;
+}
+
+.top, .bottom {
+  display: flex;
+  width: 100%;
+  min-height: 6rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.top {
+  justify-content: space-evenly;
+}
+
 .center {
   width: 100%;
+  flex-grow: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .arrangement {
-  --grid-cell-size: 150px;
   display: grid;
-  width: 100%;
-  grid-template-columns: repeat(var(--half-colls-count), var(--grid-cell-size)) 1fr repeat(var(--half-colls-count), var(--grid-cell-size));
-  grid-template-rows: repeat(var(--total-rows-count), var(--grid-cell-size));
+  grid-template-columns: repeat(var(--half-colls-count), 1fr) 1fr repeat(var(--half-colls-count), 1fr);
+  grid-template-rows: repeat(var(--total-rows-count), 1fr);
+  aspect-ratio: calc(var(--half-colls-count) * 2 + 1) / var(--total-rows-count);
+  max-width: 100%;
+  max-height: 100%;
   place-items: center;
 }
 
@@ -43,8 +68,13 @@
   background-color: red;
 }
 
-.top {
-  display: flex;
-  width: 100%;
-  justify-content: space-evenly;
+.text-primary {
+  font-size: var(--text-size-primary);
+  color: var(--text-color-primary);
 }
+
+.text-secondary {
+  font-size: var(--text-size-secondary);
+  color: var(--text-color-secondary);
+}
+
