@@ -1,4 +1,5 @@
 :root {
+    --font-primary: "Roboto", sans-serif;
 }
 
 *,
@@ -18,6 +19,7 @@ body {
     height: 100%;
     justify-content: center;
     align-items: center;
+    font-family: var(--font-primary);
 }
 
 #root {
