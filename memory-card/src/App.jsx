@@ -154,13 +154,13 @@ function App() {
         <div className="score">
           {isPlaying && (
             <div className="score__curr text-primary">
-              <span className="score-label">POINTS </span>
-              <span className="score-value">{score}</span>
+              <span className="score__label">POINTS </span>
+              <span className="score__value">{score}</span>
             </div>
           )}
           <div className={`score__high ${isPlaying ? "text-secondary" : "text-primary"}`}>
-            <span className="score-label">HIGH SCORE </span>
-            <span className="score-value">{highScore}</span>
+            <span className="score__label">HIGH SCORE </span>
+            <span className="score__value">{highScore}</span>
           </div>
         </div>
 
