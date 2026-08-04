@@ -151,14 +151,14 @@ function App() {
   return (
     <>
       <div className="top">
-        <div className="score">
+        <div className={`score ${isPlaying ? "playing" : ""}`}>
           {isPlaying && (
             <div className="text-primary">
               <span>POINTS </span>
               <span>{score}</span>
             </div>
           )}
-          <div className="text-secondary">
+          <div className={`high-score ${isPlaying ? "text-secondary" : "text-primary"}`}>
             <span>HIGH SCORE </span>
             <span className="record">{highScore}</span>
           </div>
@@ -190,7 +190,15 @@ function App() {
         </div>
       </div>
       <div className="bottom">
-        {!isPlaying && <button className="text-primary play-btn" type="button" onClick={handleGameStart}>PLAY</button>}
+        {!isPlaying && (
+          <button
+            className="text-primary play-btn"
+            type="button"
+            onClick={handleGameStart}
+          >
+            PLAY
+          </button>
+        )}
         {isPlaying && (
           <div className="text-primary">
             <span>PAYMENT </span>
