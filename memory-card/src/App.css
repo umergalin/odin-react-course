@@ -33,6 +33,20 @@
   justify-content: flex-start;
 }
 
+.score__curr,
+.score__high {
+  font-size: var(--text-size-primary);
+  color: var(--text-color-primary);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.score--playing .score__high {
+  font-size: var(--text-size-secondary);
+  color: var(--text-color-secondary);
+  font-weight: 500;
+}
+
 .lives {
   grid-column: 3;
   justify-self: end;
