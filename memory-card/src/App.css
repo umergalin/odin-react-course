@@ -22,7 +22,7 @@
 
 .top {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr auto 1fr;
 }
 
 .score {
@@ -31,6 +31,20 @@
   grid-column: 2;
   align-items: center;
   justify-content: flex-start;
+}
+
+.score__curr,
+.score__high {
+  font-size: var(--text-size-primary);
+  color: var(--text-color-primary);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.score--playing .score__high {
+  font-size: var(--text-size-secondary);
+  color: var(--text-color-secondary);
+  font-weight: 500;
 }
 
 .lives {
